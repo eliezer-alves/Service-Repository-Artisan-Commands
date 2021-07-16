@@ -23,9 +23,9 @@ class MakeServiceCommand extends Command
 
     protected $namespace;
     protected $class;
-    protected $file;
     protected $repositoryClass;
-    protected $servicePath;
+    protected $file;
+    protected $path;
 
     /**
      * Create a new command instance.
@@ -47,10 +47,16 @@ class MakeServiceCommand extends Command
     private function hydrator()
     {
         $this->class = $this->argument('class');
-        $this->file = app_path("Services/$this->class.php");
         $this->repositoryClass = $this->option('rep');
+        $this->path = app_path("Services");
+        $this->file = "$this->path/$this->class.php";
     }
 
+    /**
+     * Returns the contents of the file to be created.
+     *
+     * @return void
+     */
     private function setContents()
     {
         $template = file_get_contents(__DIR__ . './stubs/service.stub');
@@ -73,8 +79,8 @@ class MakeServiceCommand extends Command
     public function handle()
     {
         $this->hydrator();
-        if(!File::exists(app_path('Services'))){
-            File::makeDirectory(app_path('Services'));
+        if(!File::exists($this->path)){
+            File::makeDirectory($this->path);
         }
 
         File::put($this->file, $this->setContents());
