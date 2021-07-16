@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Services;
+
+/**
+ * Service Layer - description class
+ *
+ * @since {{ $since }}
+ *
+ */
+class {{ $className }}
+{
+    //
+}
