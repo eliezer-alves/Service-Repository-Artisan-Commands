@@ -23,6 +23,7 @@ class RepositoryCommand extends Command
 
     protected $namespace;
     protected $class;
+    protected $classInterface;
     protected $modelClass;
     protected $file;
     protected $fileInterface;
@@ -49,11 +50,12 @@ class RepositoryCommand extends Command
     {
         $this->namespace .= "\\" . ($this->option('path') ?? 'Eloquent');
         $this->class = $this->argument('class');
+        $this->classInterface = $this->class.'Interface';
         $this->modelClass = $this->option('m');
         $this->path = app_path('Repositories/' . ($this->option('path') ?? 'Eloquent'));
         $this->contractsPath = app_path('Repositories/Contracts');
         $this->file = "$this->path/$this->class.php";
-        $this->fileInterface = "$this->contractsPath/$this->class" . 'Interface.php';
+        $this->fileInterface = "$this->contractsPath/$this->classInterface";
     }
 
     /**
@@ -70,7 +72,7 @@ class RepositoryCommand extends Command
         
         return str_replace('{{ namespace }}', $this->namespace,            
             str_replace('{{ class }}', $this->class,
-            str_replace('{{ classInterface }}', $this->class . 'Interface',
+            str_replace('{{ classInterface }}', $this->classInterface,
             str_replace('{{ modelClass }}', $this->modelClass, $template)
         )));
     }
@@ -88,6 +90,21 @@ class RepositoryCommand extends Command
     }
 
     /**
+     * Update the repository provider file.
+     *
+     * @return void
+     */    
+    private function setContentsProviderFile()
+    {
+        $template = file_get_contents(app_path('Providers/RepositoryServiceProvider.php'));
+        
+        return str_replace('//contract-file-marker', "$this->classInterface,\n\t//contract-file-marker",
+            str_replace('//repository-file-marker', "$this->class,\n\t//repository-file-marker",
+            str_replace('//bind-marker', "\$this->app->bind(\n\t\t\t$this->classInterface::class,\n\t\t\t$this->class::class\n\t\t\n\t\t);\n\n\t\t//bind-marker", $template)
+        ));
+    }
+
+    /**
      * Creates repository layer structure
      *
      * @return void
@@ -99,6 +116,11 @@ class RepositoryCommand extends Command
         if(!File::exists(app_path('Providers/RepositoryServiceProvider.php'))){
             File::put(app_path('Providers/RepositoryServiceProvider.php'), file_get_contents(__DIR__ . './stubs/repository-service-provider.stub'));
         }
+    }
+
+    private function register()
+    {
+        File::put(app_path('Providers/RepositoryServiceProvider.php'), $this->setContentsProviderFile());
     }
 
     /**
@@ -123,6 +145,7 @@ class RepositoryCommand extends Command
 
         File::put($this->file, $this->setContents());
         File::put($this->fileInterface, $this->setContentsFileInterface());
+        $this->register();
 
         $this->info('Repository created successfully.');
     }
