@@ -115,6 +115,7 @@ class RepositoryCommand extends Command
         File::put("$this->contractsPath/AbstractRepositoryInterface.php", file_get_contents(__DIR__ . './stubs/abstract-repository-interface.stub'));
         if(!File::exists(app_path('Providers/RepositoryServiceProvider.php'))){
             File::put(app_path('Providers/RepositoryServiceProvider.php'), file_get_contents(__DIR__ . './stubs/repository-service-provider.stub'));
+            File::put(config_path('app.php'), str_replace('App\Providers\RouteServiceProvider::class,', "App\Providers\RouteServiceProvider::class,\n\t\tApp\Providers\RepositoryServiceProvider::class,\n", file_get_contents(config_path('app.php'))));
         }
     }
 
