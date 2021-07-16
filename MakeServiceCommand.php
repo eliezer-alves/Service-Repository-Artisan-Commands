@@ -12,7 +12,7 @@ class MakeServiceCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'make:service {className} {--rep=*}';
+    protected $signature = 'make:service {class} {--rep=}';
 
     /**
      * The console command description.
@@ -21,9 +21,10 @@ class MakeServiceCommand extends Command
      */
     protected $description = 'Create a new service class';
 
-    protected $className;
+    protected $namespace;
+    protected $class;
     protected $file;
-    protected $repositoryClasses;
+    protected $repositoryClass;
     protected $servicePath;
 
     /**
@@ -34,6 +35,7 @@ class MakeServiceCommand extends Command
     public function __construct()
     {
         parent::__construct();
+        $this->namespace = 'App\Services';
     }
 
     /**
@@ -44,9 +46,23 @@ class MakeServiceCommand extends Command
 
     private function hydrator()
     {
-        $this->className = $this->argument('className');
-        $this->file = app_path("Services/$this->className.php");
-        $this->repositoryClasses = $this->option('rep');
+        $this->class = $this->argument('class');
+        $this->file = app_path("Services/$this->class.php");
+        $this->repositoryClass = $this->option('rep');
+    }
+
+    private function setContents()
+    {
+        $template = file_get_contents(__DIR__ . './stubs/service.stub');
+        if($this->repositoryClass){
+            $template = file_get_contents(__DIR__ . './stubs/service.repository.stub');
+        }
+        
+        return str_replace('{{ namespace }}', $this->namespace,            
+            str_replace('{{ class }}', $this->class,
+            str_replace('{{ repositoryClassInterface }}', $this->repositoryClass . 'Interface',
+            str_replace('{{ attributeRepositoryClass }}', lcfirst($this->repositoryClass), $template)
+        )));
     }
 
     /**
@@ -61,9 +77,8 @@ class MakeServiceCommand extends Command
             File::makeDirectory(app_path('Services'));
         }
 
-        $template = file_get_contents(__DIR__ . './stubs/ServiceClass.stub');
-        $contents = str_replace('{{ $className }}', $this->className, str_replace('{{ $since }}', date('d/m/Y'), $template));
+        File::put($this->file, $this->setContents());
 
-        File::put($this->file, $contents);
+        $this->info('Service created successfully.');
     }
 }
