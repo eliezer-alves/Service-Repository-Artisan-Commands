@@ -55,7 +55,7 @@ class RepositoryCommand extends Command
         $this->path = app_path('Repositories/' . ($this->option('path') ?? 'Eloquent'));
         $this->contractsPath = app_path('Repositories/Contracts');
         $this->file = "$this->path/$this->class.php";
-        $this->fileInterface = "$this->contractsPath/$this->classInterface";
+        $this->fileInterface = "$this->contractsPath/$this->classInterface.php";
     }
 
     /**
