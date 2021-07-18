@@ -46,7 +46,7 @@ class RepositoryCommand extends Command
      *
      * @return void
      */
-    private function hydrator()
+    private function hydrator():void
     {
         $this->namespace .= "\\" . ($this->option('path') ?? 'Eloquent');
         $this->class = $this->argument('class');
@@ -96,32 +96,32 @@ class RepositoryCommand extends Command
      */    
     private function setContentsProviderFile()
     {
-        $template = file_get_contents(app_path('Providers/RepositoryServiceProvider.php'));
-        
-        return str_replace('//contract-file-marker', "$this->classInterface,\n\t//contract-file-marker",
-            str_replace('//repository-file-marker', "$this->class,\n\t//repository-file-marker",
-            str_replace('//bind-marker', "\$this->app->bind(\n\t\t\t$this->classInterface::class,\n\t\t\t$this->class::class\n\t\t\n\t\t);\n\n\t\t//bind-marker", $template)
-        ));
+        $template = file_get_contents(__DIR__ . './stubs/repository-service-provider.stub');
+
+        foreach(glob("$this->path/*") as $filename){
+            $class = basename($filename, '.php');
+            $classInterface = $class . 'Interface';
+            $template = str_replace('//add-interface', "$classInterface,\n\t//add-interface",
+                str_replace('//add-repository', "$class,\n\t//add-repository",
+                str_replace('//add-bind', "\$this->app->bind(\n\t\t\t$classInterface::class,\n\t\t\t$class::class\n\t\t\n\t\t);\n\t\t//add-bind", $template)
+            ));
+        }
+
+        return $template;
     }
 
     /**
-     * Creates repository layer structure
-     *
-     * @return void
-     */  
-    private function scaffoldRepositories()
-    {
-        File::makeDirectory($this->contractsPath);
-        File::put("$this->contractsPath/AbstractRepositoryInterface.php", file_get_contents(__DIR__ . './stubs/abstract-repository-interface.stub'));
-        if(!File::exists(app_path('Providers/RepositoryServiceProvider.php'))){
-            File::put(app_path('Providers/RepositoryServiceProvider.php'), file_get_contents(__DIR__ . './stubs/repository-service-provider.stub'));
-            File::put(config_path('app.php'), str_replace('App\Providers\RouteServiceProvider::class,', "App\Providers\RouteServiceProvider::class,\n\t\tApp\Providers\RepositoryServiceProvider::class,\n", file_get_contents(config_path('app.php'))));
-        }
-    }
-
+     * Register repository class with its interface
+     * 
+     */
     private function register()
     {
-        File::put(app_path('Providers/RepositoryServiceProvider.php'), $this->setContentsProviderFile());
+        if(!File::exists(app_path('Providers/RepositoryServiceProvider.php'))){
+            File::put(app_path('Providers/RepositoryServiceProvider.php'), "");
+            File::put(config_path('app.php'), str_replace('App\Providers\RouteServiceProvider::class,', "App\Providers\RouteServiceProvider::class,\n\t\tApp\Providers\RepositoryServiceProvider::class,\n", file_get_contents(config_path('app.php'))));
+        }
+
+        return File::put(app_path('Providers/RepositoryServiceProvider.php'), $this->setContentsProviderFile());        
     }
 
     /**
@@ -132,12 +132,14 @@ class RepositoryCommand extends Command
     public function handle()
     {
         $this->hydrator();
-        if(!File::exists($this->path)){
-            File::makeDirectory($this->path, $mode = 0755, $recursive = true);
-        }
 
         if(!File::exists($this->contractsPath)){
-            $this->scaffoldRepositories();
+            File::makeDirectory($this->contractsPath);
+        }
+
+        if(!File::exists($this->path)){
+            File::makeDirectory($this->path, $mode = 0755, $recursive = true);            
+            File::put("$this->contractsPath/AbstractRepositoryInterface.php", file_get_contents(__DIR__ . './stubs/abstract-repository-interface.stub'));
         }
 
         if(!File::exists("$this->path/AbstractRepository.php")){

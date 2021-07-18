@@ -3,10 +3,10 @@
 namespace App\Providers;
 
 use App\Repositories\Contracts\{
-    //contract-file-marker
+    //add-interface
 };
 use App\Repositories\Eloquent\{
-    //repository-file-marker
+    //add-repository
 };
 
 use Illuminate\Support\ServiceProvider;
@@ -20,7 +20,7 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //bind-marker   
+        //add-bind
     }
 
     /**
