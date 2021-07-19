@@ -12,7 +12,7 @@ class MakeServiceCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'make:service {class} {--R|repository=} {--r|resource}';
+    protected $signature = 'make:service {name} {--R|repository=} {--r|resource}';
 
     /**
      * The console command description.
@@ -47,7 +47,7 @@ class MakeServiceCommand extends Command
 
     private function hydrator()
     {
-        $this->class = $this->argument('class');
+        $this->class = $this->argument('name');
         $this->repositoryClass = $this->option('repository');
         $this->resource = $this->option('resource');
         $this->path = app_path("Services");
@@ -75,8 +75,8 @@ class MakeServiceCommand extends Command
                 $template = file_get_contents(__DIR__ . './stubs/service.plain.stub');
             }
         }
-        
-        return str_replace('{{ namespace }}', $this->namespace,            
+
+        return str_replace('{{ namespace }}', $this->namespace,
             str_replace('{{ class }}', $this->class,
             str_replace('{{ repositoryClassInterface }}', $this->repositoryClass . 'Interface',
             str_replace('{{ attributeRepositoryClass }}', lcfirst($this->repositoryClass), $template)

@@ -12,7 +12,7 @@ class RepositoryCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'make:repository {class} {--m|model=} {--p|path=}';
+    protected $signature = 'make:repository {name} {--m|model=} {--p|path=}';
 
     /**
      * The console command description.
@@ -49,11 +49,11 @@ class RepositoryCommand extends Command
     private function hydrator():void
     {
         $this->namespace .= "\\" . ($this->option('path') ?? 'Eloquent');
-        $this->class = $this->argument('class');
+        $this->class = $this->argument('name');
         $this->classInterface = $this->class.'Interface';
         $this->modelClass = $this->option('model');
         $this->path = app_path('Repositories/' . ($this->option('path') ?? 'Eloquent'));
-        $this->contractsPath = app_path('Repositories/Contracts');
+        $this->contractsPath = app_path('Repositories\Contracts');
         $this->file = "$this->path/$this->class.php";
         $this->fileInterface = "$this->contractsPath/$this->classInterface.php";
     }
@@ -62,15 +62,15 @@ class RepositoryCommand extends Command
      * Returns the contents of the file to be created.
      *
      * @return void
-     */    
+     */
     private function setContents()
     {
         $template = file_get_contents(__DIR__ . './stubs/repository.stub');
         if($this->modelClass){
             $template = file_get_contents(__DIR__ . './stubs/repository.model.stub');
         }
-        
-        return str_replace('{{ namespace }}', $this->namespace,            
+
+        return str_replace('{{ namespace }}', $this->namespace,
             str_replace('{{ class }}', $this->class,
             str_replace('{{ classInterface }}', $this->classInterface,
             str_replace('{{ modelClass }}', $this->modelClass, $template)
@@ -81,11 +81,11 @@ class RepositoryCommand extends Command
      * Returns the contents of the interface file to be created.
      *
      * @return void
-     */    
+     */
     private function setContentsFileInterface()
     {
         $template = file_get_contents(__DIR__ . './stubs/repository-interface.stub');
-        
+
         return str_replace('{{ namespace }}', 'App\Repositories\Contracts', str_replace('{{ class }}', $this->class, $template));
     }
 
@@ -93,7 +93,7 @@ class RepositoryCommand extends Command
      * Update the repository provider file.
      *
      * @return void
-     */    
+     */
     private function setContentsProviderFile()
     {
         $template = file_get_contents(__DIR__ . './stubs/repository-service-provider.stub');
@@ -112,7 +112,7 @@ class RepositoryCommand extends Command
 
     /**
      * Register repository class with its interface
-     * 
+     *
      */
     private function register()
     {
@@ -121,7 +121,7 @@ class RepositoryCommand extends Command
             File::put(config_path('app.php'), str_replace('App\Providers\RouteServiceProvider::class,', "App\Providers\RouteServiceProvider::class,\n\t\tApp\Providers\RepositoryServiceProvider::class,\n", file_get_contents(config_path('app.php'))));
         }
 
-        return File::put(app_path('Providers/RepositoryServiceProvider.php'), $this->setContentsProviderFile());        
+        return File::put(app_path('Providers/RepositoryServiceProvider.php'), $this->setContentsProviderFile());
     }
 
     /**
@@ -132,13 +132,12 @@ class RepositoryCommand extends Command
     public function handle()
     {
         $this->hydrator();
-
         if(!File::exists($this->contractsPath)){
-            File::makeDirectory($this->contractsPath);
+            File::makeDirectory($this->contractsPath, 0755, true);
         }
 
         if(!File::exists($this->path)){
-            File::makeDirectory($this->path, $mode = 0755, $recursive = true);            
+            File::makeDirectory($this->path, 0755, true);
             File::put("$this->contractsPath/AbstractRepositoryInterface.php", file_get_contents(__DIR__ . './stubs/abstract-repository-interface.stub'));
         }
 

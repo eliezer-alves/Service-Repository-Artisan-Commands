@@ -39,9 +39,9 @@ class {{ class }}
      * @param  int  $id
      * @return \Illuminate\Support\Collection
      */
-    public function show($findOrFail)
+    public function show($id)
     {
-        return $this->{{ attributeRepositoryClass }}->find($findOrFail);
+        return $this->{{ attributeRepositoryClass }}->find($id);
     }
 
     /**
