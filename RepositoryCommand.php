@@ -12,7 +12,7 @@ class RepositoryCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'make:repository {class} {--m=} {--path=}';
+    protected $signature = 'make:repository {class} {--m|model=} {--p|path=}';
 
     /**
      * The console command description.
@@ -51,7 +51,7 @@ class RepositoryCommand extends Command
         $this->namespace .= "\\" . ($this->option('path') ?? 'Eloquent');
         $this->class = $this->argument('class');
         $this->classInterface = $this->class.'Interface';
-        $this->modelClass = $this->option('m');
+        $this->modelClass = $this->option('model');
         $this->path = app_path('Repositories/' . ($this->option('path') ?? 'Eloquent'));
         $this->contractsPath = app_path('Repositories/Contracts');
         $this->file = "$this->path/$this->class.php";
