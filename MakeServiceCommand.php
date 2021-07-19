@@ -12,7 +12,7 @@ class MakeServiceCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'make:service {class} {--rep=}';
+    protected $signature = 'make:service {class} {--R|repository=} {--r|resource}';
 
     /**
      * The console command description.
@@ -26,6 +26,7 @@ class MakeServiceCommand extends Command
     protected $repositoryClass;
     protected $file;
     protected $path;
+    protected $resource;
 
     /**
      * Create a new command instance.
@@ -47,7 +48,8 @@ class MakeServiceCommand extends Command
     private function hydrator()
     {
         $this->class = $this->argument('class');
-        $this->repositoryClass = $this->option('rep');
+        $this->repositoryClass = $this->option('repository');
+        $this->resource = $this->option('resource');
         $this->path = app_path("Services");
         $this->file = "$this->path/$this->class.php";
     }
@@ -60,8 +62,18 @@ class MakeServiceCommand extends Command
     private function setContents()
     {
         $template = file_get_contents(__DIR__ . './stubs/service.stub');
-        if($this->repositoryClass){
-            $template = file_get_contents(__DIR__ . './stubs/service.repository.stub');
+        if($this->resource){
+            if($this->repositoryClass){
+                $template = file_get_contents(__DIR__ . './stubs/service.repository.stub');
+            }else{
+                $template = file_get_contents(__DIR__ . './stubs/service.stub');
+            }
+        }else{
+            if($this->repositoryClass){
+                $template = file_get_contents(__DIR__ . './stubs/service.repository.plain.stub');
+            }else{
+                $template = file_get_contents(__DIR__ . './stubs/service.plain.stub');
+            }
         }
         
         return str_replace('{{ namespace }}', $this->namespace,            

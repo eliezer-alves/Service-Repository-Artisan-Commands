@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Repositories\Contracts\{{ repositoryClassInterface }};
+
+class {{ class }}
+{
+    protected ${{ attributeRepositoryClass }};
+
+    public function __construct({{ repositoryClassInterface }} ${{ attributeRepositoryClass }})
+    {
+        $this->{{ attributeRepositoryClass }} = ${{ attributeRepositoryClass }};
+    }
+}
