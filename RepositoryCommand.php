@@ -150,5 +150,6 @@ class RepositoryCommand extends Command
         $this->register();
 
         $this->info('Repository created successfully.');
+        return 0;
     }
 }

@@ -61,7 +61,6 @@ class ServiceCommand extends Command
      */
     private function setContents()
     {
-        $template = file_get_contents(__DIR__ . './stubs/service.stub');
         if($this->resource){
             if($this->repositoryClass){
                 $template = file_get_contents(__DIR__ . './stubs/service.repository.stub');
@@ -98,5 +97,6 @@ class ServiceCommand extends Command
         File::put($this->file, $this->setContents());
 
         $this->info('Service created successfully.');
+        return 0;
     }
 }

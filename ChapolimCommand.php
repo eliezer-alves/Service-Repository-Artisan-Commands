@@ -12,7 +12,7 @@ class ChapolimCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'chapolim {name} {--m|model} {--c|controller} {--R|repository} {--S|service} {--r|resource}';
+    protected $signature = 'chapolim:make {name} {--m|model} {--c|controller} {--R|repository} {--S|service} {--r|resource}';
 
     /**
      * The console command description.
@@ -71,9 +71,9 @@ class ChapolimCommand extends Command
             $this->info('Model created successfully.');
         }
         if($this->option('controller')){
-            Artisan::call("make:controller", [
+            Artisan::call("chapolim:controller", [
                 'name' => $this->controller,
-                '--api' => 'default'
+                '-r' => 'default'
             ]);
             $this->info('Controller created successfully.');
         }

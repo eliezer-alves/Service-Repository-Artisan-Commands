@@ -19,7 +19,7 @@ class {{ class }} extends Controller
      */
     public function index()
     {
-        //
+        return $this->service->index();
     }
 
     /**
@@ -30,7 +30,7 @@ class {{ class }} extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $this->service->store($request);
     }
 
     /**
@@ -41,7 +41,7 @@ class {{ class }} extends Controller
      */
     public function show($id)
     {
-        //
+        return $this->service->show($id);
     }
 
     /**
@@ -53,7 +53,7 @@ class {{ class }} extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        return $this->service->update($request->all(), $id);
     }
 
     /**
@@ -64,6 +64,6 @@ class {{ class }} extends Controller
      */
     public function destroy($id)
     {
-        //
+        return $this->service->destroy($id);
     }
 }
