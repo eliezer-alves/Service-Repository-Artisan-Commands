@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class MakeServiceCommand extends Command
+class ServiceCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -78,8 +78,8 @@ class MakeServiceCommand extends Command
 
         return str_replace('{{ namespace }}', $this->namespace,
             str_replace('{{ class }}', $this->class,
-            str_replace('{{ repositoryClassInterface }}', $this->repositoryClass . 'Interface',
-            str_replace('{{ attributeRepositoryClass }}', lcfirst($this->repositoryClass), $template)
+            str_replace('{{ repositoryInterface }}', $this->repositoryClass . 'Interface',
+            str_replace('{{ attributeRepository }}', lcfirst($this->repositoryClass), $template)
         )));
     }
 

@@ -2,15 +2,15 @@
 
 namespace {{ namespace }};
 
-use App\Repositories\Contracts\{{ repositoryClassInterface }};
+use App\Repositories\Contracts\{{ repositoryInterface }};
 
 class {{ class }}
 {
-    protected ${{ attributeRepositoryClass }};
+    protected ${{ attributeRepository }};
 
-    public function __construct({{ repositoryClassInterface }} ${{ attributeRepositoryClass }})
+    public function __construct({{ repositoryInterface }} ${{ attributeRepository }})
     {
-        $this->{{ attributeRepositoryClass }} = ${{ attributeRepositoryClass }};
+        $this->{{ attributeRepository }} = ${{ attributeRepository }};
     }
 
     /**
@@ -20,7 +20,7 @@ class {{ class }}
      */
     public function index()
     {
-       return $this->{{ attributeRepositoryClass }}->all();
+       return $this->{{ attributeRepository }}->all();
     }
 
     /**
@@ -30,7 +30,7 @@ class {{ class }}
      */
     public function store($request)
     {
-        return $this->{{ attributeRepositoryClass }}->create($request);
+        return $this->{{ attributeRepository }}->create($request);
     }
 
     /**
@@ -41,7 +41,7 @@ class {{ class }}
      */
     public function show($id)
     {
-        return $this->{{ attributeRepositoryClass }}->find($id);
+        return $this->{{ attributeRepository }}->find($id);
     }
 
     /**
@@ -53,7 +53,7 @@ class {{ class }}
      */
     public function update($request, $id)
     {
-        return $this->{{ attributeRepositoryClass }}->update($request, $id);
+        return $this->{{ attributeRepository }}->update($request, $id);
     }
 
     /**
@@ -64,6 +64,6 @@ class {{ class }}
      */
     public function destroy($id)
     {
-        return $this->{{ attributeRepositoryClass }}->delete($id);
+        return $this->{{ attributeRepository }}->delete($id);
     }
 }
