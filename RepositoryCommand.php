@@ -23,8 +23,8 @@ class RepositoryCommand extends Command
 
     protected $namespace;
     protected $class;
-    protected $classInterface;
-    protected $modelClass;
+    protected $interface;
+    protected $model;
     protected $file;
     protected $fileInterface;
     protected $path;
@@ -50,12 +50,12 @@ class RepositoryCommand extends Command
     {
         $this->namespace .= "\\" . ($this->option('path') ?? 'Eloquent');
         $this->class = $this->argument('name');
-        $this->classInterface = $this->class.'Interface';
-        $this->modelClass = $this->option('model');
+        $this->interface = $this->class.'Interface';
+        $this->model = $this->option('model');
         $this->path = app_path('Repositories/' . ($this->option('path') ?? 'Eloquent'));
         $this->contractsPath = app_path('Repositories\Contracts');
         $this->file = "$this->path/$this->class.php";
-        $this->fileInterface = "$this->contractsPath/$this->classInterface.php";
+        $this->fileInterface = "$this->contractsPath/$this->interface.php";
     }
 
     /**
@@ -66,14 +66,14 @@ class RepositoryCommand extends Command
     private function setContents()
     {
         $template = file_get_contents(__DIR__ . './stubs/repository.stub');
-        if($this->modelClass){
+        if($this->model){
             $template = file_get_contents(__DIR__ . './stubs/repository.model.stub');
         }
 
         return str_replace('{{ namespace }}', $this->namespace,
             str_replace('{{ class }}', $this->class,
-            str_replace('{{ classInterface }}', $this->classInterface,
-            str_replace('{{ modelClass }}', $this->modelClass, $template)
+            str_replace('{{ interface }}', $this->interface,
+            str_replace('{{ model }}', $this->model, $template)
         )));
     }
 
@@ -100,10 +100,10 @@ class RepositoryCommand extends Command
 
         foreach(glob("$this->path/*") as $filename){
             $class = basename($filename, '.php');
-            $classInterface = $class . 'Interface';
-            $template = str_replace('//add-interface', "$classInterface,\n\t//add-interface",
+            $interface = $class . 'Interface';
+            $template = str_replace('//add-interface', "$interface,\n\t//add-interface",
                 str_replace('//add-repository', "$class,\n\t//add-repository",
-                str_replace('//add-bind', "\$this->app->bind(\n\t\t\t$classInterface::class,\n\t\t\t$class::class\n\t\t\n\t\t);\n\t\t//add-bind", $template)
+                str_replace('//add-bind', "\$this->app->bind(\n\t\t\t$interface::class,\n\t\t\t$class::class\n\t\t\n\t\t);\n\t\t//add-bind", $template)
             ));
         }
 
