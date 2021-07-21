@@ -2,12 +2,12 @@
 
 namespace {{ namespace }};
 
-use App\Models\{{ modelClass }};
-use App\Repositories\Contracts\{{ classInterface }};
+use App\Models\{{ model }};
+use App\Repositories\Contracts\{{ interface }};
 
-class {{ class }} extends AbstractRepository implements {{ classInterface }}
+class {{ class }} extends AbstractRepository implements {{ interface }}
 {
-    public function __construct({{ modelClass }} $model)
+    public function __construct({{ model }} $model)
     {
         parent::__construct($model);
     }

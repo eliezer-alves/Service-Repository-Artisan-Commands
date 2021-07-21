@@ -5,14 +5,14 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class MakeServiceCommand extends Command
+class ServiceCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'make:service {class} {--R|repository=} {--r|resource}';
+    protected $signature = 'make:service {name} {--R|repository=} {--r|resource}';
 
     /**
      * The console command description.
@@ -47,7 +47,7 @@ class MakeServiceCommand extends Command
 
     private function hydrator()
     {
-        $this->class = $this->argument('class');
+        $this->class = $this->argument('name');
         $this->repositoryClass = $this->option('repository');
         $this->resource = $this->option('resource');
         $this->path = app_path("Services");
@@ -61,7 +61,6 @@ class MakeServiceCommand extends Command
      */
     private function setContents()
     {
-        $template = file_get_contents(__DIR__ . './stubs/service.stub');
         if($this->resource){
             if($this->repositoryClass){
                 $template = file_get_contents(__DIR__ . './stubs/service.repository.stub');
@@ -75,11 +74,11 @@ class MakeServiceCommand extends Command
                 $template = file_get_contents(__DIR__ . './stubs/service.plain.stub');
             }
         }
-        
-        return str_replace('{{ namespace }}', $this->namespace,            
+
+        return str_replace('{{ namespace }}', $this->namespace,
             str_replace('{{ class }}', $this->class,
-            str_replace('{{ repositoryClassInterface }}', $this->repositoryClass . 'Interface',
-            str_replace('{{ attributeRepositoryClass }}', lcfirst($this->repositoryClass), $template)
+            str_replace('{{ repositoryInterface }}', $this->repositoryClass . 'Interface',
+            str_replace('{{ attributeRepository }}', lcfirst($this->repositoryClass), $template)
         )));
     }
 
@@ -98,5 +97,6 @@ class MakeServiceCommand extends Command
         File::put($this->file, $this->setContents());
 
         $this->info('Service created successfully.');
+        return 0;
     }
 }

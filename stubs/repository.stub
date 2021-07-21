@@ -2,8 +2,8 @@
 
 namespace {{ namespace }};
 
-use App\Repositories\Contracts\{{ classInterface }};
+use App\Repositories\Contracts\{{ interface }};
 
-class {{ class }} extends AbstractRepository implements {{ classInterface }}
+class {{ class }} extends AbstractRepository implements {{ interface }}
 {
 }
